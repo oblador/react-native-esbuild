@@ -1,6 +1,7 @@
 {
   "name": "react-native-esbuild",
-  "version": "0.1.0",
+  "version": "0.1.1",
+  "description": "Fast bundler and dev server for react-native using esbuild",
   "main": "src/index",
   "author": {
     "name": "Joel Arvidsson",
@@ -17,6 +18,13 @@
   "license": "MIT",
   "files": [
     "src/**/*.js"
+  ],
+  "keywords": [
+    "react-native",
+    "esbuild",
+    "dev-server",
+    "development",
+    "bundler"
   ],
   "dependencies": {
     "@babel/code-frame": "^7.16.7",

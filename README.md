@@ -1,15 +1,28 @@
 <h1 align="center">react-native-esbuild</h1>
+<h3 align="center">The fastest bundler for React Native.</h3>
+
+<div align="center">
+  <a href="https://github.com/oblador?tab=followers">
+    <img src="https://img.shields.io/github/followers/oblador?label=Follow%20%40oblador&style=social" />
+  </a>
+
+  <a href="https://twitter.com/trastknast">
+    <img src="https://img.shields.io/twitter/follow/trastknast?label=Follow%20%40trastknast&style=social" />
+  </a>
+</div>
 
 ## Features
 
-- Fast – ~10-50x faster depending on project
-- Smaller bundles through tree shaking
-- Drop-in replacement for metro
-- Support for custom babel transformer
+- **Fast** – ~10-50x faster depending on project
+- **Tree shaking** – Smaller bundles means faster apps
+- **Compatible** – Drop-in replacement for metro
+- **Configurable** – Support for custom transformers and env variables
+
+## Sponsoring
+
+If this library helped you, please consider [sponsoring](https://github.com/sponsors/oblador).
 
 ## Installation
-
-### Add dependencies
 
 ```shell
 yarn add react-native-esbuild esbuild
