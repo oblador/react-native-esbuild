@@ -65,7 +65,7 @@ function getEsbuildConfig(config, args) {
         platform,
         rootdir: config.root,
         publicPath: assetsPublicPath,
-        outdir: assetsDest ? path.join(assetsDest, 'assets') : null,
+        outdir: assetsDest,
         dev,
       }),
       babelPlugin({

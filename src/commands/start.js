@@ -41,7 +41,11 @@ module.exports = (getBundleConfig) => async (_, config, args) => {
     }
   };
   const bundler = createBundler(
-    (options) => getBundleConfig(config, options),
+    (options) =>
+      getBundleConfig(config, {
+        ...options,
+        assetsPublicPath: ASSETS_PUBLIC_PATH,
+      }),
     reload
   );
 
