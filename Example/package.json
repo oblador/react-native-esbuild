@@ -1,0 +1,36 @@
+{
+  "name": "example",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "android": "react-native run-android --no-packager",
+    "ios": "react-native run-ios --no-packager",
+    "start": "react-native esbuild-start",
+    "bundle": "rm -rf build && mkdir build && react-native esbuild-bundle --bundle-output ./build/index.bundle --assets-dest ./build/assets",
+    "test": "jest",
+    "lint": "eslint .",
+    "postinstall": "DESTINATION='node_modules/react-native-esbuild' LIB_FILE=`cd .. && echo \\`pwd\\`/\\`npm pack\\`` && (rm -rf $DESTINATION || true) && mkdir $DESTINATION && tar -xvzf $LIB_FILE -C $DESTINATION --strip-components 1 && rm $LIB_FILE"
+  },
+  "dependencies": {
+    "esbuild": "^0.14.39",
+    "react": "17.0.2",
+    "react-native": "0.68.2",
+    "react-native-reanimated": "^2.8.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.12.9",
+    "@babel/runtime": "^7.12.5",
+    "@react-native-community/eslint-config": "^2.0.0",
+    "babel-jest": "^26.6.3",
+    "eslint": "^7.32.0",
+    "jest": "^26.6.3",
+    "metro-react-native-babel-preset": "^0.67.0",
+    "react-test-renderer": "17.0.2"
+  },
+  "jest": {
+    "preset": "react-native"
+  },
+  "volta": {
+    "node": "16.15.0"
+  }
+}

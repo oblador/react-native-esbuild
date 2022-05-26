@@ -1,0 +1,42 @@
+{
+  "name": "react-native-esbuild",
+  "version": "0.1.0",
+  "main": "src/index",
+  "author": {
+    "name": "Joel Arvidsson",
+    "email": "joel@oblador.se"
+  },
+  "homepage": "https://github.com/oblador/react-native-esbuild",
+  "bugs": {
+    "url": "https://github.com/oblador/react-native-esbuild/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/oblador/react-native-esbuild.git"
+  },
+  "license": "MIT",
+  "files": [
+    "src/**/*.js"
+  ],
+  "dependencies": {
+    "@babel/code-frame": "^7.16.7",
+    "@babel/plugin-syntax-flow": "^7.17.12",
+    "@babel/plugin-transform-flow-strip-types": "^7.17.12",
+    "@babel/plugin-transform-react-jsx": "^7.17.12",
+    "@react-native-community/cli-server-api": "^8.0.0",
+    "fs-extra": "^10.1.0",
+    "image-size": "^1.0.1",
+    "source-map": "^0.7.3"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.18.0",
+    "@react-native/polyfills": "^2.0.0",
+    "esbuild": "^0.14.39",
+    "prettier": "^2.6.2"
+  },
+  "peerDependencies": {
+    "@babel/core": ">=7.0.0",
+    "@react-native/polyfills": ">=2.0.0",
+    "esbuild": ">=0.14"
+  }
+}
