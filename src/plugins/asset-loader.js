@@ -73,7 +73,7 @@ const assetLoaderPlugin = ({
       for (const file of files) {
         const match = pattern.exec(file);
         if (match) {
-          let [, scale, , , platformExtension] = match;
+          let [, , scale, , , platformExtension] = match;
           scale = scale || '1';
           if (
             !scales[scale] ||

@@ -8,6 +8,7 @@
 
 import React from 'react';
 import {
+  Image,
   SafeAreaView,
   ScrollView,
   StatusBar,
@@ -29,6 +30,7 @@ import Animated, {
   useAnimatedStyle,
   useSharedValue,
 } from 'react-native-reanimated';
+import esbuildLogoSource from './esbuild-logo.png';
 
 const Section = ({ children, title }) => {
   const isDarkMode = useColorScheme() === 'dark';
@@ -88,6 +90,7 @@ const App = () => {
             backgroundColor: isDarkMode ? Colors.black : Colors.white,
           }}
         >
+          <Image source={esbuildLogoSource} style={styles.esbuildLogo} />
           <Animated.View style={[styles.animatedBall, uas]} />
           <Section title="Step One">
             Edit <Text style={styles.highlight}>App.js</Text> to change this
@@ -125,6 +128,11 @@ const styles = StyleSheet.create({
   },
   highlight: {
     fontWeight: '700',
+  },
+  esbuildLogo: {
+    position: 'absolute',
+    top: 10,
+    left: 10,
   },
   animatedBall: {
     position: 'absolute',
