@@ -5,7 +5,7 @@ function createEsbuildCommands(
   enhanceEsbuildConfig = (esbuildConfig) => esbuildConfig
 ) {
   const getEnhancedEsbuildConfig = (config, args) =>
-    enhanceEsbuildConfig(getEsbuildConfig(config, args));
+    enhanceEsbuildConfig(getEsbuildConfig(config, args), args);
 
   return [
     {
