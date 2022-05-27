@@ -6,7 +6,7 @@ const esmCustomMainFieldResolverPlugin = ({
 } = {}) => ({
   name: 'esm-resolver',
   setup(build) {
-    const getPkg = p => {
+    const getPkg = (p) => {
       const dir = path.dirname(p);
       if (dir === p) {
         throw new Error('Unable to locate package.json');
@@ -17,7 +17,7 @@ const esmCustomMainFieldResolverPlugin = ({
         return getPkg(dir);
       }
     };
-    build.onResolve({ filter }, async args => {
+    build.onResolve({ filter }, async (args) => {
       if (args.importer.includes('node_modules')) {
         const pkg = getPkg(args.importer);
         const map = pkg[mainField];

@@ -1,10 +1,12 @@
+const path = require('path');
+
 const scaleAssetSuffixMap = {
-  '0.75': 'ldpi',
-  '1': 'mdpi',
-  '1.5': 'hdpi',
-  '2': 'xhdpi',
-  '3': 'xxhdpi',
-  '4': 'xxxhdpi',
+  0.75: 'ldpi',
+  1: 'mdpi',
+  1.5: 'hdpi',
+  2: 'xhdpi',
+  3: 'xxhdpi',
+  4: 'xxxhdpi',
 };
 
 const drawableExtensions = new Set([

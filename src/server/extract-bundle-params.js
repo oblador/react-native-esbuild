@@ -8,7 +8,7 @@ function extractBundleParams(url) {
 
   if (!pathname.endsWith('.bundle')) {
     throw new Error(
-      `Expected path name to end with .bundle, got "${pathname}"`,
+      `Expected path name to end with .bundle, got "${pathname}"`
     );
   }
 
