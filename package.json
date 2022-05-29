@@ -4,7 +4,8 @@
   "description": "Fast bundler and dev server for react-native using esbuild",
   "main": "src/index",
   "scripts": {
-    "test": "uvu src .spec.js"
+    "test": "uvu src .spec.js",
+    "test-ios": "FORCE_BUNDLING=1 xcodebuild test -workspace Example/ios/Example.xcworkspace -scheme 'Example' -destination 'platform=iOS Simulator,name=iPhone 13'"
   },
   "author": {
     "name": "Joel Arvidsson",
