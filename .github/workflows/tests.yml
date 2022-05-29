@@ -1,0 +1,24 @@
+name: Tests
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  unit:
+    name: Unit tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup node from node version file
+        uses: actions/setup-node@v3
+        with:
+          node-version: 14
+      - name: Install dependencies
+        run: yarn --frozen-lockfile --non-interactive --silent --ignore-scripts
+      - name: Run unit tests
+        run: yarn test

@@ -12,6 +12,10 @@ function extractBundleParams(url) {
     );
   }
 
+  if (!platform) {
+    throw new Error(`Expected platform in query parameters`);
+  }
+
   return {
     platform,
     entryFile: pathname.substring(1, pathname.length - 7),
