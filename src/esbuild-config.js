@@ -10,6 +10,7 @@ const IMAGE_EXTENSIONS = BITMAP_IMAGE_EXTENSIONS.concat(
 );
 const VIDEO_EXTENSIONS = ['.mp4'];
 const ASSET_EXTENSIONS = IMAGE_EXTENSIONS.concat(VIDEO_EXTENSIONS);
+const SOURCE_EXTENSIONS = ['.tsx', '.ts', '.jsx', '.js', '.json'];
 
 function getEsbuildConfig(config, args) {
   const {
@@ -22,14 +23,12 @@ function getEsbuildConfig(config, args) {
     assetsPublicPath,
     sourcemapOutput,
   } = args;
-  const resolveExtensions = ['.tsx', '.ts', '.jsx', '.js', '.json']
-    .concat(ASSET_EXTENSIONS)
-    .map((extension) => [
-      `.${platform}${extension}`,
-      `.native${extension}`,
-      `.react-native${extension}`,
-      extension,
-    ])
+
+  const platforms = [platform, 'native', 'react-native'];
+  const extensions = SOURCE_EXTENSIONS.concat(ASSET_EXTENSIONS);
+  const resolveExtensions = platforms
+    .map((p) => extensions.map((e) => `.${p}${e}`))
+    .concat(extensions)
     .flat();
 
   return {
