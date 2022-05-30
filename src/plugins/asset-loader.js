@@ -2,7 +2,8 @@ const fs = require('fs-extra');
 const path = require('path');
 const crypto = require('crypto');
 const { promisify } = require('util');
-const sizeOf = promisify(require('image-size'));
+const imageSize = require('image-size');
+const sizeOf = promisify(imageSize);
 const { getAssetDestinationPath } = require('./asset-destination');
 
 function escapeRegex(string) {
@@ -15,6 +16,17 @@ async function getFilesHash(files) {
     hash.update(await fs.readFile(file));
   }
   return hash.digest('hex');
+}
+
+function getAssetType(extension) {
+  switch (extension) {
+    case '.jpeg':
+      return 'jpg';
+    case '.tif':
+      return 'tiff';
+    default:
+      return extension.slice(1);
+  }
 }
 
 const assetLoaderPlugin = ({
@@ -116,7 +128,8 @@ const assetLoaderPlugin = ({
           throw new Error(`Base scale not found for "${relativePath}"`);
         }
         const dirPath = path.dirname(args.path);
-        const dimensions = scalableExtensions.includes(extension) // TODO: this should include .svg in some manner – consider making this more complicated
+        const assetType = getAssetType(extension);
+        const dimensions = imageSize.types.includes(assetType)
           ? await sizeOf(path.join(dirPath, baseScale.name))
           : {};
         const files = Object.values(scales)
