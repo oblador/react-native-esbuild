@@ -38,104 +38,122 @@ const assetLoaderPlugin = ({
   dev = false,
   publicPath = '/',
   assetRegistryPath = '@react-native/assets/registry.js',
-  aliases = {},
 } = {}) => ({
   name: 'react-native-asset-loader',
   setup(build) {
     const filter = new RegExp(`(${extensions.map(escapeRegex).join('|')})$`);
-    const assets = new Map();
+    const assets = [];
     const dirCache = new Map();
     const priority = (queryPlatform) =>
       ['native', platform].indexOf(queryPlatform);
 
-    const resolveWithAliases = (args) => {
-      for (const alias in aliases) {
-        if (args.path.startsWith(`${alias}/`)) {
-          return path.join(aliases[alias], args.path.substr(alias.length + 1));
+    const resolveWithSuffix = async (args, suffix) => {
+      const extension = path.extname(args.path);
+      const basename = args.path.substr(0, args.path.length - extension.length);
+      return build.resolve(`${basename}${suffix}${extension}`, {
+        resolveDir: args.resolveDir,
+        importer: args.importer,
+        kind: args.kind,
+        namespace: args.namespace,
+        pluginData: { skipReactNativeAssetLoader: true },
+      });
+    };
+
+    const resolveBaseScale = async (args) => {
+      const suffixlessResult = await resolveWithSuffix(args, '');
+      if (suffixlessResult.errors.length !== 0) {
+        const result = await resolveWithSuffix(args, '@1x');
+        if (result.errors.length === 0) {
+          return result;
         }
       }
-      return path.join(args.resolveDir, args.path);
+      return suffixlessResult;
     };
 
     build.onResolve({ filter }, async (args) => {
-      const absolutePath = resolveWithAliases(args);
-      const dirPath = path.dirname(absolutePath);
-      const extension = path.extname(absolutePath);
-      const relativePath = path.relative(rootdir, absolutePath);
+      if (
+        args.pluginData &&
+        args.pluginData.skipReactNativeAssetLoader === true
+      ) {
+        // Avoid recursive calls
+        return null;
+      }
 
-      const suffix = `(@(\\d+(\\.\\d+)?)x)?(\\.(${platform}|native))?${escapeRegex(
-        extension
-      )}$`;
-      const filename = path
-        .basename(absolutePath)
-        .replace(new RegExp(suffix), '');
-      if (!dirCache.has(dirPath)) {
-        dirCache.set(dirPath, await fs.readdir(dirPath));
+      const result = await resolveBaseScale(args);
+      if (result.errors.length > 0) {
+        return { errors: result.errors };
       }
-      const files = dirCache.get(dirPath);
-      const pattern = scalableExtensions.includes(extension)
-        ? new RegExp(`^${escapeRegex(filename)}${suffix}`)
-        : new RegExp(
-            `^${escapeRegex(filename)}(\\.(${platform}|native))?${escapeRegex(
-              extension
-            )}$`
-          );
-      const scales = {};
-      let found = false;
-      for (const file of files) {
-        const match = pattern.exec(file);
-        if (match) {
-          let [, , scale, , , platformExtension] = match;
-          scale = scale || '1';
-          if (
-            !scales[scale] ||
-            priority(platformExtension) > priority(scales[scale].platform)
-          ) {
-            scales[scale] = { platform: platformExtension, name: file };
-            found = true;
-          }
-        }
-      }
-      if (!found) {
-        throw new Error(`Unable to resolve "${args.path}"`);
-      }
-      assets.set(absolutePath, {
-        relativePath,
-        basename: filename,
-        extension,
-        scales,
-        httpServerLocation: path.join(publicPath, path.dirname(relativePath)),
-      });
-      return { path: absolutePath, namespace: 'react-native-asset' };
+
+      return { path: result.path, namespace: 'react-native-asset' };
     });
 
     build.onLoad(
       { filter: /./, namespace: 'react-native-asset' },
       async (args) => {
-        const asset = assets.get(args.path);
-        if (!asset) {
-          throw new Error(`Unable to find scales for "${args.path}"`);
+        const dirPath = path.dirname(args.path);
+        const extension = path.extname(args.path);
+        const relativePath = path.relative(rootdir, args.path);
+
+        const suffix = `(@(\\d+(\\.\\d+)?)x)?(\\.(${platform}|native))?${escapeRegex(
+          extension
+        )}$`;
+        const basename = path
+          .basename(args.path)
+          .replace(new RegExp(suffix), '');
+        if (!dirCache.has(dirPath)) {
+          dirCache.set(dirPath, await fs.readdir(dirPath));
         }
-        const {
-          scales,
+        const files = dirCache.get(dirPath);
+        const pattern = scalableExtensions.includes(extension)
+          ? new RegExp(`^${escapeRegex(basename)}${suffix}`)
+          : new RegExp(
+              `^${escapeRegex(basename)}(\\.(${platform}|native))?${escapeRegex(
+                extension
+              )}$`
+            );
+        const scales = {};
+        let found = false;
+        for (const file of files) {
+          const match = pattern.exec(file);
+          if (match) {
+            let [, , scale, , , platformExtension] = match;
+            scale = scale || '1';
+            if (
+              !scales[scale] ||
+              priority(platformExtension) > priority(scales[scale].platform)
+            ) {
+              scales[scale] = { platform: platformExtension, name: file };
+              found = true;
+            }
+          }
+        }
+        if (!found) {
+          throw new Error(`Unable to resolve "${args.path}"`);
+        }
+        const httpServerLocation = path.join(
+          publicPath,
+          path.dirname(relativePath)
+        );
+        assets.push({
+          relativePath,
           basename,
           extension,
-          relativePath,
+          scales,
           httpServerLocation,
-        } = asset;
+        });
         const baseScale = scales['1'];
         if (!baseScale) {
           throw new Error(`Base scale not found for "${relativePath}"`);
         }
-        const dirPath = path.dirname(args.path);
         const assetType = getAssetType(extension);
         const dimensions = imageSize.types.includes(assetType)
           ? await sizeOf(path.join(dirPath, baseScale.name))
           : {};
-        const files = Object.values(scales)
-          .map((scale) => path.join(dirPath, scale.name))
-          .sort();
-        const hash = await getFilesHash(files);
+        const hash = await getFilesHash(
+          Object.values(scales)
+            .map((scale) => path.join(dirPath, scale.name))
+            .sort()
+        );
 
         return {
           contents: `module.exports = require('${assetRegistryPath}').registerAsset(${JSON.stringify(
@@ -160,26 +178,25 @@ const assetLoaderPlugin = ({
     );
 
     if (outdir) {
-      build.onEnd(async () => {
-        const iterator = assets.entries();
-        let entry;
-        while ((entry = iterator.next().value)) {
-          const [absolutePath, asset] = entry;
-          const { scales, basename, extension, relativePath } = asset;
-          const sourceDir = path.dirname(absolutePath);
-          await Promise.all(
-            Object.entries(scales).map(async ([scale, { name }]) => {
-              const source = path.join(sourceDir, name);
-              const destination = path.join(
-                outdir,
-                getAssetDestinationPath(asset, scale, platform)
-              );
-              await fs.mkdir(path.dirname(destination), { recursive: true });
-              await fs.copy(source, destination);
-            })
-          );
-        }
-      });
+      build.onEnd(async () =>
+        Promise.all(
+          assets.map(async (asset) => {
+            const { scales, basename, extension, relativePath } = asset;
+            const sourceDir = path.dirname(path.join(rootdir, relativePath));
+            return Promise.all(
+              Object.entries(scales).map(async ([scale, { name }]) => {
+                const source = path.join(sourceDir, name);
+                const destination = path.join(
+                  outdir,
+                  getAssetDestinationPath(asset, scale, platform)
+                );
+                await fs.mkdir(path.dirname(destination), { recursive: true });
+                await fs.copy(source, destination);
+              })
+            );
+          })
+        )
+      );
     }
   },
 });
