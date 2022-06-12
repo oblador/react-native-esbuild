@@ -6,9 +6,6 @@ const commands = createEsbuildCommands((config) => ({
   plugins: config.plugins.concat(
     babelPlugin({
       filter: /(node_modules\/react-native-reanimated\/.+\.[tj]sx?|App\.js)$/,
-      config: {
-        filename: config.outfile,
-      },
     })
   ),
 }));

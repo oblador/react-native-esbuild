@@ -19,6 +19,7 @@ const babelPlugin = (options = {}) => ({
     const transformContents = async ({ args, contents }) => {
       const babelOptions = babel.loadOptions({
         ...config,
+        sourceMaps: 'inline',
         filename: args.path,
         caller: {
           name: 'esbuild-plugin-babel',
