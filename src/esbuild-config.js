@@ -74,9 +74,6 @@ function getEsbuildConfig(config, args) {
           filename: bundleOutput,
           babelrc: false,
           configFile: false,
-          minified: false,
-          compact: false,
-          retainLines: true,
           plugins: [
             '@babel/plugin-syntax-flow',
             '@babel/plugin-transform-flow-strip-types',

@@ -18,6 +18,8 @@ const babelPlugin = (options = {}) => ({
 
     const transformContents = async ({ args, contents }) => {
       const babelOptions = babel.loadOptions({
+        minified: false,
+        compact: false,
         ...config,
         sourceMaps: 'inline',
         filename: args.path,
