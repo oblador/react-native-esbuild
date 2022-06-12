@@ -83,6 +83,10 @@ function createEsbuildCommands(
           description: 'Removes cached files',
           default: false,
         },
+        {
+          name: '--no-interactive',
+          description: 'Disables interactive mode',
+        },
       ],
       description: 'Starts the development server with esbuild as bundler',
     },

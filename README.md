@@ -120,12 +120,13 @@ This library aims to be a plug-in replacement for the metro equivalent commands 
 
 ### `react-native esbuild-start`
 
-| **Argument**    | **Description**                  | **Default** |
-| --------------- | -------------------------------- | ----------- |
-| `--port`        | Port to listen for http requests | `8081`      |
-| `--host`        | Host to listen for http requests | `127.0.0.1` |
-| `--projectRoot` | Path to a custom project root.   | _None_      |
-| `--reset-cache` | Removes cached files.            | _N/A_       |
+| **Argument**       | **Description**                  | **Default** |
+| ------------------ | -------------------------------- | ----------- |
+| `--port`           | Port to listen for http requests | `8081`      |
+| `--host`           | Host to listen for http requests | `127.0.0.1` |
+| `--projectRoot`    | Path to a custom project root.   | _None_      |
+| `--reset-cache`    | Removes cached files.            | _N/A_       |
+| `--no-interactive` | Disables interactive mode.       | `false`     |
 
 ### `react-native esbuild-bundle`
 

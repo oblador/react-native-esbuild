@@ -37,6 +37,7 @@
     "@babel/plugin-transform-flow-strip-types": "^7.17.12",
     "@babel/plugin-transform-react-jsx": "^7.17.12",
     "@react-native-community/cli-server-api": "^8.0.0",
+    "@react-native-community/cli-tools": "^8.0.0",
     "fs-extra": "^10.1.0",
     "image-size": "^1.0.1",
     "source-map": "^0.7.3"
