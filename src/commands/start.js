@@ -10,6 +10,7 @@ const {
   serveAsset,
   extractBundleParams,
   symbolicateStack,
+  enableInteractiveMode,
 } = require('../server');
 const { emptyDefaultCacheDir } = require('../cache');
 
@@ -21,6 +22,7 @@ module.exports = (getBundleConfig) => async (_, config, args) => {
     port = 8081,
     projectRoot = config.root,
     resetCache,
+    interactive,
   } = args;
 
   if (resetCache) {
@@ -123,4 +125,8 @@ module.exports = (getBundleConfig) => async (_, config, args) => {
   });
 
   server.listen(port);
+
+  if (interactive) {
+    enableInteractiveMode(messageSocketEndpoint);
+  }
 };
