@@ -51,25 +51,19 @@ function getBasePath(asset) {
 }
 
 function getAssetDestinationPath(asset, scale, platform) {
-  switch (platform) {
-    case 'ios': {
-      const iosFolder = asset.httpServerLocation
-        .substr(1)
-        .replace(/\.\.\//g, '_');
-      return path.join(
-        iosFolder,
-        `${asset.basename}${scale === '1' ? '' : `@${scale}x`}${
-          asset.extension
-        }`
-      );
-    }
-    case 'android': {
-      const androidFolder = getAndroidResourceFolderName(asset, scale);
-      const fileName = getAndroidResourceIdentifier(asset);
-      return path.join(androidFolder, `${fileName}${asset.extension}`);
-    }
+  if (platform === 'android') {
+    const androidFolder = getAndroidResourceFolderName(asset, scale);
+    const fileName = getAndroidResourceIdentifier(asset);
+    return path.join(androidFolder, `${fileName}${asset.extension}`);
   }
-  throw new Error(`Unsupported platform "${platform}"`);
+
+  const assetFolder = asset.httpServerLocation
+    .substr(1)
+    .replace(/\.\.\//g, '_');
+  return path.join(
+    assetFolder,
+    `${asset.basename}${scale === '1' ? '' : `@${scale}x`}${asset.extension}`
+  );
 }
 
 module.exports = {

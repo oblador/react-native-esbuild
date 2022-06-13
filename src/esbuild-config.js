@@ -2,6 +2,9 @@ const os = require('os');
 const path = require('path');
 const { assetLoaderPlugin } = require('./plugins/asset-loader');
 const { babelPlugin } = require('./plugins/babel');
+const {
+  outOfTreePlatformResolverPlugin,
+} = require('./plugins/out-of-tree-platform-resolver');
 
 const BITMAP_IMAGE_EXTENSIONS = ['.png', '.jpg', '.jpeg', '.gif', '.webp'];
 const VECTOR_IMAGE_EXTENSIONS = ['.svg'];
@@ -24,12 +27,27 @@ function getEsbuildConfig(config, args) {
     sourcemapOutput,
   } = args;
 
+  if (!config.platforms[platform]) {
+    throw new Error(
+      `Invalid platform "${platform}", expected one of ${Object.keys(
+        config.platforms
+      ).join(', ')}`
+    );
+  }
+
   const platforms = [platform, 'native', 'react-native'];
   const extensions = SOURCE_EXTENSIONS.concat(ASSET_EXTENSIONS);
   const resolveExtensions = platforms
     .map((p) => extensions.map((e) => `.${p}${e}`))
     .concat(extensions)
     .flat();
+
+  const outOfTreeReactNativeModuleName =
+    config.platforms[platform].npmPackageName;
+  const resolveReactNativePath = (p) =>
+    outOfTreeReactNativeModuleName
+      ? require.resolve(path.join(outOfTreeReactNativeModuleName, p))
+      : path.join(config.reactNativePath, p);
 
   return {
     mainFields: ['react-native', 'browser', 'module', 'main'],
@@ -55,12 +73,16 @@ function getEsbuildConfig(config, args) {
       js: `var __BUNDLE_START_TIME__=this.nativePerformanceNow?nativePerformanceNow():Date.now(); var window = typeof globalThis !== 'undefined' ? globalThis : typeof global !== 'undefined' ? global : typeof window !== 'undefined' ? window : this;`,
     },
     inject: [
-      ...require('@react-native/polyfills')(),
-      path.join(config.reactNativePath, 'Libraries/Core/InitializeCore.js'),
+      ...require(resolveReactNativePath('rn-get-polyfills'))(),
+      resolveReactNativePath('Libraries/Core/InitializeCore.js'),
     ],
     target: 'es6',
     format: 'iife',
     plugins: [
+      outOfTreeReactNativeModuleName &&
+        outOfTreePlatformResolverPlugin({
+          moduleName: outOfTreeReactNativeModuleName,
+        }),
       assetLoaderPlugin({
         extensions: ASSET_EXTENSIONS,
         scalableExtensions: BITMAP_IMAGE_EXTENSIONS,
@@ -84,7 +106,7 @@ function getEsbuildConfig(config, args) {
           ],
         },
       }),
-    ],
+    ].filter(Boolean),
   };
 }
 
