@@ -14,7 +14,7 @@
 ## Features
 
 - **Fast** – ~10-50x faster depending on project
-- **Tree shaking** – Smaller bundles means faster apps
+- **Tree shaking** – Smaller bundles means faster apps (**21% smaller** for `init` project)
 - **Compatible** – Drop-in replacement for metro
 - **Configurable** – Support for custom transformers and env variables
 
