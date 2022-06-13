@@ -42,6 +42,9 @@ function getEsbuildConfig(config, args) {
     define: {
       __DEV__: dev,
       global: 'window',
+      'process.env.NODE_ENV': JSON.stringify(
+        dev ? 'development' : 'production'
+      ),
     },
     loader: {
       '.js': 'jsx',
