@@ -39,10 +39,12 @@ const INTERNAL_CALLSITES_REGEX = new RegExp(
   ].join('|')
 );
 
+const ESBUILD_FUNCTIONS = ['__async', '__init', '__require'];
+
 function collapseReactFrame(frame) {
-  const collapse = Boolean(
-    frame.file && INTERNAL_CALLSITES_REGEX.test(frame.file)
-  );
+  const collapse =
+    Boolean(frame.file && INTERNAL_CALLSITES_REGEX.test(frame.file)) ||
+    ESBUILD_FUNCTIONS.includes(frame.methodName);
   return { ...frame, collapse };
 }
 
