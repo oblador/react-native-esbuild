@@ -1,6 +1,7 @@
 const path = require('path');
 const crypto = require('crypto');
-const fs = require('fs-extra');
+const { outputFile } = require('fs-extra');
+const fs = require('fs');
 const babel = require('@babel/core');
 const { getDefaultCacheDir } = require('../cache');
 
@@ -15,6 +16,7 @@ const babelPlugin = (options = {}) => ({
       cache = true,
       config = {},
     } = options;
+    const transformCache = new Map();
 
     const transformContents = async ({ args, contents }) => {
       const babelOptions = babel.loadOptions({
@@ -51,10 +53,10 @@ const babelPlugin = (options = {}) => ({
           md5(JSON.stringify(babelOptions) + contents)
         );
         try {
-          return await fs.readFile(cachePath, { encoding: 'utf8' });
+          return await fs.promises.readFile(cachePath, { encoding: 'utf8' });
         } catch (err) {
           const transformed = await transformWithBabel();
-          await fs.outputFile(cachePath, transformed);
+          await outputFile(cachePath, transformed);
           return transformed;
         }
       }
@@ -62,8 +64,30 @@ const babelPlugin = (options = {}) => ({
     };
 
     build.onLoad({ filter, namespace }, async (args) => {
-      const contents = await fs.readFile(args.path, 'utf8');
-      return { contents: await transformContents({ args, contents }) };
+      let handle;
+      try {
+        handle = await fs.promises.open(args.path, 'r');
+        let entry = transformCache.get(args.path);
+        const stats = await handle.stat();
+
+        // Use in-memory cache unless file was modified.
+        // Ideally we'd compare file contents, but it would be
+        // slower and is already done by the file system cache
+        if (!entry || entry.mtimeMs !== stats.mtimeMs) {
+          const contents = await handle.readFile('utf8');
+          const transformed = await transformContents({ args, contents });
+          entry = { transformed, mtimeMs: stats.mtimeMs };
+          if (cache) {
+            transformCache.set(args.path, entry);
+          }
+        }
+
+        return { contents: entry.transformed };
+      } finally {
+        if (handle) {
+          handle.close();
+        }
+      }
     });
   },
 });
