@@ -25,11 +25,14 @@ function createBundler(getBundleConfig, onBuild, logger) {
     if (!promiseMap[bundleOutput]) {
       let buildResolver = null;
       let buildRejecter = null;
+      let buildStart = -1;
+
       const setupBuildPromise = () => {
         const promise = new Promise((resolve, reject) => {
           buildResolver = resolve;
           buildRejecter = reject;
         });
+        buildStart = Date.now();
         // Rejections are generally caught and forwarded to the app
         // but rebuilds aren't being awaited instantly and we don't
         // want to kill the process in those cases.
@@ -64,7 +67,9 @@ function createBundler(getBundleConfig, onBuild, logger) {
             }
             logger.warn(
               'BUNDLE',
-              `${formatFilePath(localPath)}: ${chalk.dim('Building...')}`
+              `${formatFilePath(localPath)}: ${chalk.dim(
+                `${platform} building...`
+              )}`
             );
           });
 
@@ -76,7 +81,7 @@ function createBundler(getBundleConfig, onBuild, logger) {
               logger.success(
                 'BUNDLE',
                 `${formatFilePath(localPath)}: ${chalk.dim(
-                  'Build successful.'
+                  `${platform} build completed in ${Date.now() - buildStart}ms`
                 )}`
               );
               const file = outputFiles.find((f) => f.path === bundleOutput);
@@ -88,7 +93,7 @@ function createBundler(getBundleConfig, onBuild, logger) {
               logger.error(
                 'BUNDLE',
                 `${formatFilePath(localPath)}: ${chalk.bold.red(
-                  'Build failed, see errors above.'
+                  `${platform} build failed, see errors above`
                 )}`
               );
               buildRejecter(
