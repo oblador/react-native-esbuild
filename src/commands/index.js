@@ -71,7 +71,6 @@ function createEsbuildCommands(
         },
         {
           name: '--host <string>',
-          default: '',
         },
         {
           name: '--projectRoot <path>',

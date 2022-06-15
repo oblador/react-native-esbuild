@@ -5,6 +5,7 @@ const {
   createDevServerMiddleware,
   indexPageMiddleware,
 } = require('@react-native-community/cli-server-api');
+const chalk = require('chalk');
 const {
   createBundler,
   serveAsset,
@@ -13,10 +14,15 @@ const {
   enableInteractiveMode,
 } = require('../server');
 const { emptyDefaultCacheDir } = require('../cache');
+const { defaultLogger } = require('../logger');
 
 const ASSETS_PUBLIC_PATH = '/assets/';
 
 module.exports = (getBundleConfig) => async (_, config, args) => {
+  // Hermes for some reason hijacks this upon import and messes with stack traces
+  process.removeAllListeners('uncaughtException');
+  process.removeAllListeners('unhandledRejection');
+
   const {
     host = '127.0.0.1',
     port = 8081,
@@ -48,7 +54,8 @@ module.exports = (getBundleConfig) => async (_, config, args) => {
         ...options,
         assetsPublicPath: ASSETS_PUBLIC_PATH,
       }),
-    reload
+    reload,
+    defaultLogger
   );
 
   middleware.use(async (req, res, next) => {
@@ -125,6 +132,9 @@ module.exports = (getBundleConfig) => async (_, config, args) => {
   });
 
   server.listen(port);
+
+  const LOGO = chalk.bgHex('#FFCF00').hex('#000000')('»');
+  console.log(`${LOGO} esbuild listening on http://${host}:${port}\n`);
 
   if (interactive) {
     enableInteractiveMode(messageSocketEndpoint);
