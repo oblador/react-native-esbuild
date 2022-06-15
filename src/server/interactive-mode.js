@@ -2,7 +2,7 @@ const readline = require('readline');
 const { logger } = require('@react-native-community/cli-tools');
 
 function printInteractiveModeInstructions() {
-  logger.log('To reload the app press "r"\nTo open developer menu press "d"');
+  logger.log('To reload the app press "r"\nTo open developer menu press "d"\n');
 }
 
 function enableInteractiveMode(messageSocket) {

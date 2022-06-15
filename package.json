@@ -4,6 +4,7 @@
   "description": "Fast bundler and dev server for react-native using esbuild",
   "main": "src/index",
   "scripts": {
+    "format": "prettier src --write",
     "test": "uvu src .spec.js",
     "test-ios": "FORCE_BUNDLING=1 xcodebuild test -workspace Example/ios/Example.xcworkspace -scheme 'Example' -destination 'platform=iOS Simulator,name=iPhone 13'"
   },
@@ -38,6 +39,7 @@
     "@babel/plugin-transform-react-jsx": "^7.17.12",
     "@react-native-community/cli-server-api": "^8.0.0",
     "@react-native-community/cli-tools": "^8.0.0",
+    "chalk": "^4.1.2",
     "fs-extra": "^10.1.0",
     "image-size": "^1.0.1",
     "source-map": "^0.7.3"
