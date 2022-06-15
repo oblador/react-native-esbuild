@@ -5,18 +5,25 @@ const {
   createDevServerMiddleware,
   indexPageMiddleware,
 } = require('@react-native-community/cli-server-api');
+const chalk = require('chalk');
 const {
   createBundler,
   serveAsset,
   extractBundleParams,
   symbolicateStack,
   enableInteractiveMode,
+  createHMREndpoint,
 } = require('../server');
 const { emptyDefaultCacheDir } = require('../cache');
+const { defaultLogger } = require('../logger');
 
 const ASSETS_PUBLIC_PATH = '/assets/';
 
 module.exports = (getBundleConfig) => async (_, config, args) => {
+  // Hermes for some reason hijacks this upon import and messes with stack traces
+  process.removeAllListeners('uncaughtException');
+  process.removeAllListeners('unhandledRejection');
+
   const {
     host = '127.0.0.1',
     port = 8081,
@@ -36,19 +43,16 @@ module.exports = (getBundleConfig) => async (_, config, args) => {
       watchFolders: [],
     });
 
-  let connectedDevices = 0;
-  const reload = () => {
-    if (connectedDevices > 0) {
-      messageSocketEndpoint.broadcast('reload');
-    }
-  };
+  const hmr = createHMREndpoint(defaultLogger);
+
   const bundler = createBundler(
     (options) =>
       getBundleConfig(config, {
         ...options,
         assetsPublicPath: ASSETS_PUBLIC_PATH,
       }),
-    reload
+    hmr.reload,
+    defaultLogger
   );
 
   middleware.use(async (req, res, next) => {
@@ -108,23 +112,21 @@ module.exports = (getBundleConfig) => async (_, config, args) => {
 
   server.on('upgrade', (request, socket, head) => {
     const { pathname } = parseUrl(request.url);
-    const handler = websocketEndpoints[pathname];
-
+    const handler =
+      pathname === '/hot' ? hmr.server : websocketEndpoints[pathname];
     if (handler) {
       handler.handleUpgrade(request, socket, head, (ws) => {
         handler.emit('connection', ws, request);
       });
-    } else if (pathname === '/inspector/device') {
-      connectedDevices++;
-      socket.onclose = () => {
-        connectedDevices--;
-      };
     } else {
       socket.destroy();
     }
   });
 
   server.listen(port);
+
+  const LOGO = chalk.bgHex('#FFCF00').hex('#000000')('»');
+  console.log(`${LOGO} esbuild listening on http://${host}:${port}\n`);
 
   if (interactive) {
     enableInteractiveMode(messageSocketEndpoint);
