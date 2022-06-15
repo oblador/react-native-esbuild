@@ -12,6 +12,7 @@ const {
   extractBundleParams,
   symbolicateStack,
   enableInteractiveMode,
+  createHMREndpoint,
 } = require('../server');
 const { emptyDefaultCacheDir } = require('../cache');
 const { defaultLogger } = require('../logger');
@@ -42,19 +43,15 @@ module.exports = (getBundleConfig) => async (_, config, args) => {
       watchFolders: [],
     });
 
-  let connectedDevices = 0;
-  const reload = () => {
-    if (connectedDevices > 0) {
-      messageSocketEndpoint.broadcast('reload');
-    }
-  };
+  const hmr = createHMREndpoint(defaultLogger);
+
   const bundler = createBundler(
     (options) =>
       getBundleConfig(config, {
         ...options,
         assetsPublicPath: ASSETS_PUBLIC_PATH,
       }),
-    reload,
+    hmr.reload,
     defaultLogger
   );
 
@@ -115,17 +112,12 @@ module.exports = (getBundleConfig) => async (_, config, args) => {
 
   server.on('upgrade', (request, socket, head) => {
     const { pathname } = parseUrl(request.url);
-    const handler = websocketEndpoints[pathname];
-
+    const handler =
+      pathname === '/hot' ? hmr.server : websocketEndpoints[pathname];
     if (handler) {
       handler.handleUpgrade(request, socket, head, (ws) => {
         handler.emit('connection', ws, request);
       });
-    } else if (pathname === '/inspector/device') {
-      connectedDevices++;
-      socket.onclose = () => {
-        connectedDevices--;
-      };
     } else {
       socket.destroy();
     }

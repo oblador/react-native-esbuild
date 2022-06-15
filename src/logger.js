@@ -8,6 +8,7 @@ const createLog =
   };
 
 const defaultLogger = {
+  log: createLog(chalk.white),
   warn: createLog(chalk.yellow),
   success: createLog(chalk.green),
   error: createLog(chalk.red),
