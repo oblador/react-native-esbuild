@@ -5,6 +5,7 @@ const {
   createDevServerMiddleware,
   indexPageMiddleware,
 } = require('@react-native-community/cli-server-api');
+const { InspectorProxy } = require('metro-inspector-proxy');
 const chalk = require('chalk');
 const {
   createBundler,
@@ -44,6 +45,7 @@ module.exports = (getBundleConfig) => async (_, config, args) => {
     });
 
   const hmr = createHMREndpoint(defaultLogger);
+  const inspectorProxy = new InspectorProxy(projectRoot);
 
   const bundler = createBundler(
     (options) =>
@@ -54,6 +56,8 @@ module.exports = (getBundleConfig) => async (_, config, args) => {
     hmr.reload,
     defaultLogger
   );
+
+  middleware.use(inspectorProxy.processRequest.bind(inspectorProxy));
 
   middleware.use(async (req, res, next) => {
     try {
@@ -110,20 +114,25 @@ module.exports = (getBundleConfig) => async (_, config, args) => {
 
   const server = http.createServer(middleware);
 
-  server.on('upgrade', (request, socket, head) => {
-    const { pathname } = parseUrl(request.url);
-    const handler =
-      pathname === '/hot' ? hmr.server : websocketEndpoints[pathname];
-    if (handler) {
-      handler.handleUpgrade(request, socket, head, (ws) => {
-        handler.emit('connection', ws, request);
-      });
-    } else {
-      socket.destroy();
-    }
-  });
+  server.listen(port, host, () => {
+    const wsHandlers = {
+      ...websocketEndpoints,
+      ...inspectorProxy.createWebSocketListeners(server),
+      '/hot': hmr.server,
+    };
 
-  server.listen(port);
+    server.on('upgrade', (request, socket, head) => {
+      const { pathname } = parseUrl(request.url);
+      const handler = wsHandlers[pathname];
+      if (handler) {
+        handler.handleUpgrade(request, socket, head, (ws) => {
+          handler.emit('connection', ws, request);
+        });
+      } else {
+        socket.destroy();
+      }
+    });
+  });
 
   const LOGO = chalk.bgHex('#FFCF00').hex('#000000')('»');
   console.log(`${LOGO} esbuild listening on http://${host}:${port}\n`);
