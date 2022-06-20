@@ -35,8 +35,8 @@
   "dependencies": {
     "@babel/code-frame": "^7.16.7",
     "@babel/plugin-syntax-flow": "^7.17.12",
+    "@babel/plugin-syntax-jsx": "^7.17.12",
     "@babel/plugin-transform-flow-strip-types": "^7.17.12",
-    "@babel/plugin-transform-react-jsx": "^7.17.12",
     "@react-native-community/cli-server-api": "^8.0.0",
     "@react-native-community/cli-tools": "^8.0.0",
     "chalk": "^4.1.2",
