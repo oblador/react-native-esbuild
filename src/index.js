@@ -2,6 +2,7 @@ const {
   assetLoaderPlugin,
   babelPlugin,
   esmCustomMainFieldResolverPlugin,
+  outOfTreePlatformResolverPlugin,
 } = require('./plugins');
 const { createEsbuildCommands } = require('./commands');
 
@@ -13,4 +14,5 @@ module.exports = {
   assetLoaderPlugin,
   babelPlugin,
   esmCustomMainFieldResolverPlugin,
+  outOfTreePlatformResolverPlugin,
 };

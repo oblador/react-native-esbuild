@@ -121,7 +121,7 @@ function createBundler(getBundleConfig, onBuild, logger) {
         watch: true,
         incremental: true,
         write: false,
-        plugins: (buildOptions.plugins ?? []).concat(buildStatusPlugin),
+        plugins: (buildOptions.plugins || []).concat(buildStatusPlugin),
       });
     }
     return promiseMap[bundleOutput];

@@ -53,7 +53,6 @@
   },
   "peerDependencies": {
     "@babel/core": ">=7.0.0",
-    "@react-native/polyfills": ">=2.0.0",
     "esbuild": ">=0.14"
   }
 }
