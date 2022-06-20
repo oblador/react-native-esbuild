@@ -95,14 +95,14 @@ function getEsbuildConfig(config, args) {
       babelPlugin({
         filter: new RegExp(`node_modules/([^/]*react-native[^/]*)/.+\\.jsx?$`),
         cache: dev,
+        loader: 'jsx',
         config: {
-          filename: bundleOutput,
           babelrc: false,
           configFile: false,
           plugins: [
             '@babel/plugin-syntax-flow',
             '@babel/plugin-transform-flow-strip-types',
-            '@babel/plugin-transform-react-jsx',
+            '@babel/plugin-syntax-jsx',
           ],
         },
       }),

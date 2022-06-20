@@ -14,6 +14,7 @@ const babelPlugin = (options = {}) => ({
       filter = /.*/,
       namespace = '',
       cache = true,
+      loader = 'js',
       config = {},
     } = options;
     const transformCache = new Map();
@@ -82,7 +83,7 @@ const babelPlugin = (options = {}) => ({
           }
         }
 
-        return { contents: entry.transformed };
+        return { contents: entry.transformed, loader };
       } finally {
         if (handle) {
           handle.close();
