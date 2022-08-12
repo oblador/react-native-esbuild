@@ -16,8 +16,7 @@ const {
 } = require('../server');
 const { emptyDefaultCacheDir } = require('../cache');
 const { defaultLogger } = require('../logger');
-
-const ASSETS_PUBLIC_PATH = '/assets/';
+const { ASSETS_PUBLIC_PATH } = require('../config');
 
 module.exports = (getBundleConfig) => async (_, config, args) => {
   // Hermes for some reason hijacks this upon import and messes with stack traces
@@ -46,11 +45,7 @@ module.exports = (getBundleConfig) => async (_, config, args) => {
   const hmr = createHMREndpoint(defaultLogger);
 
   const bundler = createBundler(
-    (options) =>
-      getBundleConfig(config, {
-        ...options,
-        assetsPublicPath: ASSETS_PUBLIC_PATH,
-      }),
+    (options) => getBundleConfig(config, options),
     hmr.reload,
     defaultLogger
   );
