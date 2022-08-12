@@ -1,6 +1,6 @@
 {
   "name": "react-native-esbuild",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Fast bundler and dev server for react-native using esbuild",
   "main": "src/index",
   "scripts": {
