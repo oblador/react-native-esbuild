@@ -5,6 +5,7 @@ const { promisify } = require('util');
 const imageSize = require('image-size');
 const sizeOf = promisify(imageSize);
 const { getAssetDestinationPath } = require('./asset-destination');
+const { ASSETS_PUBLIC_PATH } = require('../config');
 
 function escapeRegex(string) {
   return string.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&');
@@ -36,7 +37,7 @@ const assetLoaderPlugin = ({
   rootdir,
   outdir,
   dev = false,
-  publicPath = '/',
+  publicPath = ASSETS_PUBLIC_PATH,
   assetRegistryPath = '@react-native/assets/registry.js',
 } = {}) => ({
   name: 'react-native-asset-loader',

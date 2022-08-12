@@ -23,7 +23,6 @@ function getEsbuildConfig(config, args) {
     minify,
     bundleOutput,
     assetsDest,
-    assetsPublicPath,
     sourcemapOutput,
   } = args;
 
@@ -88,7 +87,6 @@ function getEsbuildConfig(config, args) {
         scalableExtensions: BITMAP_IMAGE_EXTENSIONS,
         platform,
         rootdir: config.root,
-        publicPath: assetsPublicPath,
         outdir: assetsDest,
         dev,
       }),

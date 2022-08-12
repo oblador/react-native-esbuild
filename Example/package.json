@@ -6,7 +6,7 @@
     "android": "react-native run-android --no-packager",
     "ios": "react-native run-ios --no-packager",
     "start": "react-native esbuild-start",
-    "bundle": "rm -rf build && mkdir build && react-native esbuild-bundle --bundle-output ./build/index.bundle --assets-dest ./build/assets",
+    "bundle": "rm -rf build && mkdir build && react-native esbuild-bundle --bundle-output ./build/index.bundle --assets-dest ./build",
     "test": "jest",
     "lint": "eslint .",
     "postinstall": "DESTINATION='node_modules/react-native-esbuild' LIB_FILE=`cd .. && echo \\`pwd\\`/\\`npm pack\\`` && (rm -rf $DESTINATION || true) && mkdir $DESTINATION && tar -xvzf $LIB_FILE -C $DESTINATION --strip-components 1 && rm $LIB_FILE"
