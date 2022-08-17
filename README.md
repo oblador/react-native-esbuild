@@ -144,6 +144,10 @@ This library aims to be a plug-in replacement for the metro equivalent commands 
 
 Esbuild doesn't natively support flow so such syntax needs to be stripped with a plugin. By default any node module with `react-native` in their name will be stripped from flow, but it's also possible to do this on your own source code using the `babelPlugin` mentioned in the [Configuration](#configuration) section, but at the cost of performance.
 
+### Unhandled JS Exception: `Unexpected token '<'`
+
+Set `"jsx": "react-jsx"` in the `compilerOptions` section of your `tsconfig.json`. 
+
 ### `react-native` main field ignored
 
 A few rare packages using the `react-native` field for ESM maps, will not be correctly resolved by esbuild. To remedy this use the bundled `esmCustomMainFieldResolverPlugin`:
