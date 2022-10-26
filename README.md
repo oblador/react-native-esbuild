@@ -142,11 +142,43 @@ This library aims to be a plug-in replacement for the metro equivalent commands 
 
 ### Flow syntax errors such as `Expected "from" but found "{"`
 
-Esbuild doesn't natively support flow so such syntax needs to be stripped with a plugin. By default any node module with `react-native` in their name will be stripped from flow, but it's also possible to do this on your own source code using the `babelPlugin` mentioned in the [Configuration](#configuration) section, but at the cost of performance.
+Esbuild doesn't natively support flow so such syntax needs to be stripped with a plugin. By default any file with `@flow` or `@noflow` pragmas will be stripped from flow, but you may also opt-in flow stripping for more files by passing a custom flow syntax checker:
+
+```js
+// react-native.config.js
+const {
+  createEsbuildCommands,
+  defaultHasFlowSyntax,
+  syntaxAwareLoaderPlugin,
+} = require('react-native-esbuild');
+
+const FLOW_MODULES_WITHOUT_PRAGMA = ['react-native-video', 'rn-fetch-blob'];
+
+const commands = createEsbuildCommands(({ plugins, ...rest }, args) => ({
+  ...rest,
+  plugins: plugins
+    .filter((plugin) => plugin.name !== 'syntax-aware-loader')
+    .concat(
+      syntaxAwareLoaderPlugin({
+        filter: /\.([mc]js|[tj]sx?)$/,
+        cache: args.dev,
+        hasFlowSyntax: (contents, filePath) =>
+          defaultHasFlowSyntax(contents, filePath) ||
+          FLOW_MODULES_WITHOUT_PRAGMA.find((m) =>
+            filePath.includes(`node_modules/${m}/`)
+          ),
+      })
+    ),
+}));
+
+module.exports = {
+  commands,
+};
+```
 
 ### Unhandled JS Exception: `Unexpected token '<'`
 
-Set `"jsx": "react-jsx"` in the `compilerOptions` section of your `tsconfig.json`. 
+Set `"jsx": "react-jsx"` in the `compilerOptions` section of your `tsconfig.json`.
 
 ### `react-native` main field ignored
 
