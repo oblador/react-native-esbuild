@@ -1,7 +1,7 @@
 const os = require('os');
 const path = require('path');
 const { assetLoaderPlugin } = require('./plugins/asset-loader');
-const { babelPlugin } = require('./plugins/babel');
+const { syntaxAwareLoaderPlugin } = require('./plugins/syntax-aware-loader');
 const {
   outOfTreePlatformResolverPlugin,
 } = require('./plugins/out-of-tree-platform-resolver');
@@ -90,19 +90,9 @@ function getEsbuildConfig(config, args) {
         outdir: assetsDest,
         dev,
       }),
-      babelPlugin({
-        filter: new RegExp(`node_modules/([^/]*react-native[^/]*)/.+\\.jsx?$`),
+      syntaxAwareLoaderPlugin({
+        filter: /\.([mc]js|[tj]sx?)$/,
         cache: dev,
-        loader: 'jsx',
-        config: {
-          babelrc: false,
-          configFile: false,
-          plugins: [
-            '@babel/plugin-syntax-flow',
-            '@babel/plugin-transform-flow-strip-types',
-            '@babel/plugin-syntax-jsx',
-          ],
-        },
       }),
     ].filter(Boolean),
   };

@@ -3,6 +3,9 @@ const {
   babelPlugin,
   esmCustomMainFieldResolverPlugin,
   outOfTreePlatformResolverPlugin,
+  syntaxAwareLoaderPlugin,
+  defaultHasFlowSyntax,
+  defaultHasReanimatedSyntax,
 } = require('./plugins');
 const { createEsbuildCommands } = require('./commands');
 
@@ -15,4 +18,7 @@ module.exports = {
   babelPlugin,
   esmCustomMainFieldResolverPlugin,
   outOfTreePlatformResolverPlugin,
+  syntaxAwareLoaderPlugin,
+  defaultHasFlowSyntax,
+  defaultHasReanimatedSyntax,
 };
