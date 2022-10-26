@@ -1,0 +1,7 @@
+name: Deploy
+
+on: push
+
+jobs:
+  deploy:
+    uses: oblador/.github/.github/workflows/npm-publish.yml@main
