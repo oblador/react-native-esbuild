@@ -82,7 +82,9 @@ module.exports = (getBundleConfig) => async (_, config, args) => {
         }
       } else if (pathname === '/symbolicate') {
         const { stack } = JSON.parse(req.rawBody);
-        const url = stack.find(({ file }) => file.startsWith('http')).file;
+        const url = stack.find(
+          ({ file }) => file && file.startsWith('http')
+        ).file;
         const { platform, entryFile } = extractBundleParams(url);
         const sourceMapConsumer = await bundler.getSourcemap(
           platform,
@@ -90,6 +92,7 @@ module.exports = (getBundleConfig) => async (_, config, args) => {
         );
 
         const symbolicated = symbolicateStack(sourceMapConsumer, stack);
+
         const stringified = JSON.stringify(symbolicated);
         return res
           .writeHead(200, { 'Content-Type': 'application/json' })
