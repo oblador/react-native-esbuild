@@ -45,7 +45,7 @@ module.exports = {
 
 ### Optional: Esbuild settings
 
-If you want to customize the [esbuild configuration](https://esbuild.github.io/api/#simple-options), for example by adding your own plugins you may do so with the `createEsbuildCommands` function. This example adds babel transformation for reanimated support:
+If you want to customize the [esbuild configuration](https://esbuild.github.io/api/#simple-options), for example by adding your own plugins you may do so with the `createEsbuildCommands` function:
 
 ```js
 // react-native.config.js
@@ -56,8 +56,7 @@ const commands = createEsbuildCommands((config) => ({
   ...config,
   plugins: config.plugins.concat(
     babelPlugin({
-      filter:
-        /(node_modules\/react-native-reanimated|src\/my-reanimated-components)\/.+\.[tj]sx?$/,
+      filter: /src\/my-babel-components\/.+\.[tj]sx?$/,
     })
   ),
 }));
@@ -142,7 +141,7 @@ This library aims to be a plug-in replacement for the metro equivalent commands 
 
 ### Flow syntax errors such as `Expected "from" but found "{"`
 
-Esbuild doesn't natively support flow so such syntax needs to be stripped with a plugin. By default any file with `@flow` or `@noflow` pragmas will be stripped from flow, but you may also opt-in flow stripping for more files by passing a custom flow syntax checker:
+Esbuild doesn't natively support flow so such syntax needs to be stripped with a plugin. By default any file with `@flow` or `@noflow` pragmas will be stripped from flow, but you may also opt-in to flow stripping for more files by passing a custom flow syntax checker:
 
 ```js
 // react-native.config.js
@@ -154,9 +153,9 @@ const {
 
 const FLOW_MODULES_WITHOUT_PRAGMA = ['react-native-video', 'rn-fetch-blob'];
 
-const commands = createEsbuildCommands(({ plugins, ...rest }, args) => ({
-  ...rest,
-  plugins: plugins
+const commands = createEsbuildCommands((config, args) => ({
+  ...config,
+  plugins: config.plugins
     .filter((plugin) => plugin.name !== 'syntax-aware-loader')
     .concat(
       syntaxAwareLoaderPlugin({
