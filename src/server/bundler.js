@@ -56,6 +56,7 @@ function createBundler(getBundleConfig, onBuild, logger) {
             const resolved = await build.resolve(
               entryFile.startsWith('/') ? entryFile : `./${localPath}`,
               {
+                kind: 'entry-point',
                 resolveDir: build.initialOptions.sourceRoot,
               }
             );
@@ -115,14 +116,13 @@ function createBundler(getBundleConfig, onBuild, logger) {
         sourcemapOutput: `${bundleOutput}.map`,
       });
 
-      await esbuild.build({
+      const ctx = await esbuild.context({
         ...buildOptions,
         bundle: true,
-        watch: true,
-        incremental: true,
         write: false,
         plugins: (buildOptions.plugins || []).concat(buildStatusPlugin),
       });
+      await ctx.watch();
     }
     return promiseMap[bundleOutput];
   };

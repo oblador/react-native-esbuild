@@ -9,8 +9,6 @@ module.exports = (getBundleConfig) => async (_, config, args) => {
   await esbuild.build({
     ...esbuildConfig,
     bundle: true,
-    watch: false,
-    incremental: false,
     write: true,
   });
 };

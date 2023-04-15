@@ -179,25 +179,25 @@ const assetLoaderPlugin = ({
     );
 
     if (outdir) {
-      build.onEnd(async () =>
-        Promise.all(
-          assets.map(async (asset) => {
-            const { scales, basename, extension, relativePath } = asset;
-            const sourceDir = path.dirname(path.join(rootdir, relativePath));
-            return Promise.all(
-              Object.entries(scales).map(async ([scale, { name }]) => {
-                const source = path.join(sourceDir, name);
-                const destination = path.join(
-                  outdir,
-                  getAssetDestinationPath(asset, scale, platform)
-                );
-                await fs.mkdir(path.dirname(destination), { recursive: true });
-                await fs.copy(source, destination);
-              })
-            );
-          })
-        )
-      );
+      build.onEnd(() => {
+        assets.map(async (asset) => {
+          const { scales, relativePath } = asset;
+          const sourceDir = path.dirname(path.join(rootdir, relativePath));
+          return Promise.all(
+            Object.entries(scales).map(async ([scale, { name }]) => {
+              const source = path.join(sourceDir, name);
+              const destination = path.join(
+                outdir,
+                getAssetDestinationPath(asset, scale, platform)
+              );
+              await fs.mkdir(path.dirname(destination), {
+                recursive: true,
+              });
+              await fs.copy(source, destination);
+            })
+          );
+        });
+      });
     }
   },
 });
