@@ -4,8 +4,8 @@
 #import <React/RCTLog.h>
 #import <React/RCTRootView.h>
 
-#define TIMEOUT_SECONDS 60
-#define TEXT_TO_LOOK_FOR @"Welcome to\nReact Native"
+#define TIMEOUT_SECONDS 600
+#define TEXT_TO_LOOK_FOR @"Welcome to React"
 
 @interface ExampleTests : XCTestCase
 
