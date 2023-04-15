@@ -1,7 +1,6 @@
 const {
   assetLoaderPlugin,
   babelPlugin,
-  esmCustomMainFieldResolverPlugin,
   outOfTreePlatformResolverPlugin,
   syntaxAwareLoaderPlugin,
   defaultHasFlowSyntax,
@@ -16,7 +15,6 @@ module.exports = {
   createEsbuildCommands,
   assetLoaderPlugin,
   babelPlugin,
-  esmCustomMainFieldResolverPlugin,
   outOfTreePlatformResolverPlugin,
   syntaxAwareLoaderPlugin,
   defaultHasFlowSyntax,

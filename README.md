@@ -175,31 +175,6 @@ module.exports = {
 };
 ```
 
-### Unhandled JS Exception: `Unexpected token '<'`
-
-Set `"jsx": "react-jsx"` in the `compilerOptions` section of your `tsconfig.json`.
-
-### `react-native` main field ignored
-
-A few rare packages using the `react-native` field for ESM maps, will not be correctly resolved by esbuild. To remedy this use the bundled `esmCustomMainFieldResolverPlugin`:
-
-```js
-// react-native.config.js
-const {
-  createEsbuildCommands,
-  esmCustomMainFieldResolverPlugin,
-} = require('react-native-esbuild');
-
-const commands = createEsbuildCommands(({ plugins, ...rest }) => ({
-  ...rest,
-  plugins: plugins.concat(esmCustomMainFieldResolverPlugin()),
-}));
-
-module.exports = {
-  commands,
-};
-```
-
 ## Limitations
 
 ### Hermes engine

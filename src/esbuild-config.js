@@ -1,19 +1,14 @@
-const os = require('os');
 const path = require('path');
 const { assetLoaderPlugin } = require('./plugins/asset-loader');
 const { syntaxAwareLoaderPlugin } = require('./plugins/syntax-aware-loader');
 const {
   outOfTreePlatformResolverPlugin,
 } = require('./plugins/out-of-tree-platform-resolver');
-
-const BITMAP_IMAGE_EXTENSIONS = ['.png', '.jpg', '.jpeg', '.gif', '.webp'];
-const VECTOR_IMAGE_EXTENSIONS = ['.svg'];
-const IMAGE_EXTENSIONS = BITMAP_IMAGE_EXTENSIONS.concat(
-  VECTOR_IMAGE_EXTENSIONS
-);
-const VIDEO_EXTENSIONS = ['.mp4'];
-const ASSET_EXTENSIONS = IMAGE_EXTENSIONS.concat(VIDEO_EXTENSIONS);
-const SOURCE_EXTENSIONS = ['.tsx', '.ts', '.jsx', '.js', '.json'];
+const {
+  ASSET_EXTENSIONS,
+  SOURCE_EXTENSIONS,
+  BITMAP_IMAGE_EXTENSIONS,
+} = require('./config');
 
 function getEsbuildConfig(config, args) {
   const {
@@ -57,7 +52,7 @@ function getEsbuildConfig(config, args) {
     minify: typeof minify === 'boolean' ? minify : !dev,
     resolveExtensions,
     define: {
-      __DEV__: dev,
+      __DEV__: JSON.stringify(dev),
       global: 'window',
       'process.env.NODE_ENV': JSON.stringify(
         dev ? 'development' : 'production'

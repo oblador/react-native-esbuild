@@ -30,6 +30,8 @@ import Animated, {
   useSharedValue,
 } from 'react-native-reanimated';
 import esbuildLogoSource from './esbuild-logo.png';
+import 'react-native-get-random-values';
+import { nanoid } from 'nanoid';
 
 type SectionProps = PropsWithChildren<{
   title: string;
@@ -70,7 +72,7 @@ function App(): JSX.Element {
     backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
   };
 
-  console.warn('A warning that should be symbolicated');
+  console.warn('A warning that should be symbolicated', nanoid());
 
   const pressed = useSharedValue(false);
   const uas = useAnimatedStyle(() => {
