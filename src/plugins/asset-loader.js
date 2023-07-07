@@ -38,7 +38,7 @@ const assetLoaderPlugin = ({
   outdir,
   dev = false,
   publicPath = ASSETS_PUBLIC_PATH,
-  assetRegistryPath = '@react-native/assets/registry.js',
+  assetRegistryPath = '@react-native/assets-register/registry.js',
 } = {}) => ({
   name: 'react-native-asset-loader',
   setup(build) {
