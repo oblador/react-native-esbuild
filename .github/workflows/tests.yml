@@ -17,7 +17,7 @@ jobs:
       - name: Setup node
         uses: actions/setup-node@v3
         with:
-          node-version: 14
+          node-version: 16
       - name: Install npm dependencies
         run: yarn --frozen-lockfile --non-interactive --silent --ignore-scripts
       - name: Run tests
@@ -32,7 +32,7 @@ jobs:
       - name: Setup node
         uses: actions/setup-node@v3
         with:
-          node-version: 14
+          node-version: 16
       - name: Setup ruby
         uses: ruby/setup-ruby@v1
         with:
